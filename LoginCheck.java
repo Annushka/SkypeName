@@ -2,14 +2,16 @@ package SkypeName;//import com.sun.deploy.net.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
 //import org.apache.http.impl.client.DefaultHttpClient;
 
-import org.apache.http.HttpEntity;
+/*import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.message.AbstractHttpMessage;
-import org.apache.http.message.AbstractHttpMessage;
+import org.apache.http.message.AbstractHttpMessage;*/
+
+import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -30,83 +34,49 @@ import java.net.URL;
 
 @SuppressWarnings("deprecation")
 public class LoginCheck {
+
     boolean validate(String str) throws Exception {
-        char[] login = str.toCharArray();
-        String Str = "";
-        for (int i = 0; i < login.length; i++) {
-            if (login[i] >= 'A' && login[i] <= 'Z') {
-                login[i] = letter(login[i]);
-            }
-            Str += login[i];
+        if(str == ""){
+            throw new Exception("login is not found");
         }
-        // вызов функции адаптации букв верхнего регистра
+      str = str.toLowerCase();
+      String pattern = "^[a-z][a-z0-9\\.,\\-_]{5,31}$";
+        // Create a Pattern object
+        Pattern r = Pattern.compile(pattern);
+        // Now create matcher object.
+        Matcher m = r.matcher(str);
+        if (m.find( )) {
+            System.out.println("Found value: " + m.group(0) );
+            String url = "https://login.skype.com/json/validator?new_username=" + str;
+            System.out.println("Url is  - " + url);
 
-        if (login[0] >= 'a' && login[0] <= 'z') {
-            if (login.length >= 6 && login.length <= 32) {
-                for (int i = 1; i < login.length; i++) {
-                    char l = login[i];
-                    if (l >= 0 && l <= '+' || l == '/' || l >= ':' && l <= '^' || l == '`' || l >= '{' && l <= 127) {
-                        return false;
-                    }
-
-                }
-
-                String url = "https://login.skype.com/json/validator?new_username=" + Str;
-                System.out.println("Url is  - " + url);
-
-                // make sure cookies is turn on
-                //  CookieHandler.setDefault(new CookieManager());
+            // make sure cookies is turn on
+            //  CookieHandler.setDefault(new CookieManager());
 
 
-                //  System.out.println("смотрим - "+readUrl(url));
-                String s = readUrl(url);
-                char[] answerStr = s.toCharArray();
-                int answer = (answerStr[10] - 48) * 100 + (answerStr[11] - 48) * 10 + (answerStr[12] - 48);
+            //  System.out.println("смотрим - "+readUrl(url));
+            String s = readUrl(url);
+            char[] answerStr = s.toCharArray();
+            int answer = (answerStr[10] - 48) * 100 + (answerStr[11] - 48) * 10 + (answerStr[12] - 48);
 
-                System.out.println();
-                System.out.println("answer = " + answer);
-                if (answer == 200) {
-                    System.out.println("такого имени еще нет");
-                    return false;
-                } else {
-                    System.out.println("такое имя уже есть");
-                    return true;
-                }
+            System.out.println();
+            System.out.println("answer = " + answer);
+            if (answer == 200) {
+                System.out.println("такого имени еще нет");
+                return false;
+            } else {
+                System.out.println("такое имя уже есть");
+                return true;
             }
 
-        }
-        return false;
-    }
 
-    char letter(char l) {
-        if (l == 'A') return 'a';
-        if (l == 'B') return 'b';
-        if (l == 'C') return 'c';
-        if (l == 'D') return 'd';
-        if (l == 'E') return 'e';
-        if (l == 'F') return 'f';
-        if (l == 'G') return 'g';
-        if (l == 'H') return 'h';
-        if (l == 'I') return 'i';
-        if (l == 'J') return 'j';
-        if (l == 'K') return 'k';
-        if (l == 'L') return 'l';
-        if (l == 'M') return 'm';
-        if (l == 'N') return 'n';
-        if (l == 'O') return 'o';
-        if (l == 'P') return 'p';
-        if (l == 'Q') return 'q';
-        if (l == 'R') return 'r';
-        if (l == 'S') return 's';
-        if (l == 'T') return 't';
-        if (l == 'U') return 'u';
-        if (l == 'V') return 'v';
-        if (l == 'W') return 'w';
-        if (l == 'X') return 'x';
-        if (l == 'Y') return 'y';
-        if (l == 'Z') return 'z';
-        else return 0;
-    }
+
+        } else {
+            System.out.println("NO MATCH");
+            return false;
+        }
+   }
+
 
     private String readUrl(String urlString) throws Exception {
         BufferedReader reader = null;
@@ -127,9 +97,14 @@ public class LoginCheck {
     }
 
     public static void main(String[] args) throws Exception {
-        LoginCheck lch = new LoginCheck();
-        System.out.println(lch.validate("ArleKino"));
+       // LoginCheck lch = new LoginCheck();
+       // System.out.println(lch.validate(""));
 
+
+
+
+        //int answer = ('2' - 48) * 100 + ('0' - 48) * 10 + ('0' - 48);
+        //System.out.println("answer = "+answer );
     }
 
 }
